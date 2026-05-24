@@ -1,20 +1,25 @@
-import { useState, useRef } from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Features from './components/Features';
-import HowItWorks from './components/HowItWorks';
-import EvaluationForm from './components/EvaluationForm';
-import ResultCard from './components/ResultCard';
-import Footer from './components/Footer';
+/**
+ * App.jsx — Root component
+ * Hanya bertanggung jawab atas:
+ * 1. State navigasi antar view (home | result)
+ * 2. Menyusun MainLayout + halaman yang aktif
+ *
+ * Tidak ada UI logic di sini — semua didelegasikan ke pages dan components.
+ */
 
-// State sederhana: 'home' | 'evaluating' | 'result'
+import { useState, useRef } from 'react';
+import MainLayout from './layouts/MainLayout';
+import HomePage from './pages/HomePage';
+import ResultPage from './pages/ResultPage';
+
 export default function App() {
+  // 'home' | 'result'
   const [view, setView] = useState('home');
   const [answers, setAnswers] = useState(null);
   const evalRef = useRef(null);
 
   function handleStartEval() {
-    setView('evaluating');
+    setView('home');
     setTimeout(() => {
       evalRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
@@ -33,23 +38,16 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar onStartEval={handleStartEval} />
-
+    <MainLayout onStartEval={handleStartEval}>
       {view === 'result' ? (
-        <ResultCard answers={answers} onReset={handleReset} />
+        <ResultPage answers={answers} onReset={handleReset} />
       ) : (
-        <>
-          <Hero onStartEval={handleStartEval} />
-          <Features />
-          <HowItWorks />
-          <div ref={evalRef}>
-            <EvaluationForm onSubmit={handleSubmit} />
-          </div>
-        </>
+        <HomePage
+          ref={evalRef}
+          onStartEval={handleStartEval}
+          onSubmit={handleSubmit}
+        />
       )}
-
-      <Footer />
-    </div>
+    </MainLayout>
   );
 }
