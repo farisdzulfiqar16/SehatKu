@@ -46,7 +46,8 @@ Project ini dikembangkan sebagai MVP (Minimum Viable Product) untuk mata kuliah 
 
 > Tampilan UI SehatKu
 
-![Uploading image.png…]()
+<img width="1866" height="881" alt="Image" src="https://github.com/user-attachments/assets/932c07e2-332d-4f18-a50f-11f64bc02d72" />
+
 
 
 
