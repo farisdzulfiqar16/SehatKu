@@ -1,7 +1,9 @@
 /**
  * QuestionCard.jsx — Evaluation component
- * Card pertanyaan yang lebih compact dan touch-friendly.
- * Option button lebih tinggi untuk mudah di-tap di mobile.
+ * Card pertanyaan dengan micro interaction yang smooth:
+ * - Option button: scale + border + bg transition saat dipilih
+ * - Radio dot: fill animation saat selected
+ * - Progress dots: smooth color transition
  */
 import { questions } from '../../data/evaluationData';
 
@@ -10,7 +12,8 @@ export default function QuestionCard({ category, categoryQuestions, answers, onA
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-      {/* Card Header */}
+
+      {/* ── Card Header ── */}
       <div className="bg-green-50 px-4 py-3 border-b border-green-100 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-lg shadow-sm flex-shrink-0">
@@ -18,26 +21,29 @@ export default function QuestionCard({ category, categoryQuestions, answers, onA
           </div>
           <div>
             <h3 className="font-semibold text-gray-900 text-sm leading-tight">{category.label}</h3>
-            <p className="text-xs text-gray-400">{answeredCount}/{categoryQuestions.length} dijawab</p>          </div>
+            <p className="text-xs text-gray-400">{answeredCount}/{categoryQuestions.length} dijawab</p>
+          </div>
         </div>
-        {/* Mini progress dots */}
-        <div className="flex gap-1">
+
+        {/* Progress dots */}
+        <div className="flex gap-1.5">
           {categoryQuestions.map((q) => (
             <div
               key={q.id}
-              className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                answers[q.id] !== undefined ? 'bg-green-500' : 'bg-gray-200'
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                answers[q.id] !== undefined
+                  ? 'bg-green-500 scale-110'
+                  : 'bg-gray-200'
               }`}
             />
           ))}
         </div>
       </div>
 
-      {/* Questions */}
+      {/* ── Questions ── */}
       <div className="p-4 space-y-6">
         {categoryQuestions.map((q) => {
           const questionNumber = questions.findIndex((x) => x.id === q.id) + 1;
-          const isAnswered = answers[q.id] !== undefined;
 
           return (
             <div key={q.id}>
@@ -53,20 +59,34 @@ export default function QuestionCard({ category, categoryQuestions, answers, onA
                     <button
                       key={opt.value}
                       onClick={() => onAnswer(q.id, opt.value)}
-                      className={`w-full text-left px-3.5 py-3 rounded-xl border text-sm transition-all cursor-pointer active:scale-[0.99] ${
-                        isSelected
-                          ? 'border-green-500 bg-green-50 text-green-800 font-medium'
-                          : 'border-gray-200 hover:border-green-200 hover:bg-gray-50 text-gray-700'
-                      }`}
+                      className={`
+                        w-full text-left px-3.5 py-3 rounded-xl border text-sm cursor-pointer
+                        transition-all duration-200 ease-out
+                        ${isSelected
+                          ? 'border-green-500 bg-green-50 text-green-800 font-medium shadow-sm shadow-green-100'
+                          : 'border-gray-200 hover:border-green-200 hover:bg-gray-50/80 text-gray-700 active:scale-[0.99]'
+                        }
+                      `}
                     >
                       <div className="flex items-center gap-3">
-                        {/* Radio dot */}
+                        {/* Radio dot dengan fill animation */}
                         <div
-                          className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${
-                            isSelected ? 'border-green-500 bg-green-500' : 'border-gray-300'
-                          }`}
+                          className={`
+                            w-4 h-4 rounded-full border-2 flex-shrink-0
+                            flex items-center justify-center
+                            transition-all duration-200
+                            ${isSelected
+                              ? 'border-green-500 bg-green-500'
+                              : 'border-gray-300'
+                            }
+                          `}
                         >
-                          {isSelected && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                          {isSelected && (
+                            <div
+                              className="w-1.5 h-1.5 bg-white rounded-full"
+                              style={{ animation: 'dotPop 0.2s cubic-bezier(0.34,1.56,0.64,1) both' }}
+                            />
+                          )}
                         </div>
                         <span className="leading-snug">{opt.label}</span>
                       </div>
@@ -78,6 +98,14 @@ export default function QuestionCard({ category, categoryQuestions, answers, onA
           );
         })}
       </div>
+
+      {/* Inline keyframe untuk radio dot pop */}
+      <style>{`
+        @keyframes dotPop {
+          from { transform: scale(0); opacity: 0; }
+          to   { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }

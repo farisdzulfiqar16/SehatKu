@@ -1,6 +1,7 @@
 /**
  * SectionHeader.jsx — Reusable section title block
- * Lebih compact: badge kecil, judul medium, deskripsi subtle.
+ * Tidak punya animasi sendiri — animasi dikontrol oleh
+ * parent via komponen Reveal agar timing bisa dikonfigurasi.
  */
 import Badge from './Badge';
 
